@@ -144,7 +144,19 @@ public class exPixelPerfectCamera : MonoBehaviour {
 
     public void CalculateScaleAndRatio () {
         if ( camera.orthographic )
+        {
+            // In custom resolution, always make sure sizes are up to date and not some random value.
+            // There's probably some upstream problem but I'm not sure what.
+            if ( customResolution )
+            {
+                lastScreenWidth = width;
+                lastScreenHeight = height;
+            }
+
             scale = 2.0f * lastOrthographicSize / lastScreenHeight;
+
+            //Debug.Log("scale="  + scale + ", lastOrthographicSize=" + lastOrthographicSize + ", lastScreenHeight=" + lastScreenHeight);
+        }
         else
             ratio = 2.0f * Mathf.Tan(Mathf.Deg2Rad * lastFieldOfView * 0.5f) / lastScreenHeight;
     }

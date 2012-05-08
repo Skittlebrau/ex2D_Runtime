@@ -300,6 +300,9 @@ public class exSprite : exSpriteBase {
         // ======================================================== 
 
         if ( (updateFlags & UpdateFlags.Vertex) != 0 ) {
+
+            //Debug.Log("ppfScale_=" + ppfScale_.x + ", " + ppfScale_.y);
+
             Vector2 finalScale = new Vector2 ( scale_.x * ppfScale_.x,
                                                scale_.y * ppfScale_.y );
 
