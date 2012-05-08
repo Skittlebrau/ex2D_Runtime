@@ -75,7 +75,7 @@ public class exPixelPerfectCamera : MonoBehaviour {
     // Desc: 
     // ------------------------------------------------------------------ 
 
-    void OnPreRender () {
+    void OnPreCull () {
         bool changed = false;
 
         // check if we need to update pixel perfect scale
@@ -127,6 +127,14 @@ public class exPixelPerfectCamera : MonoBehaviour {
                 CalculatePixelPerfectScale ( sprite, toCamera.magnitude );
                 sprite.Commit();
             }
+        }
+
+        // Snap camera position to pixel boundary.
+        if(scale > 0.0f)
+        {
+            float ooScale = 1.0f / scale;
+            Vector3 currPos = camera.transform.position;
+            camera.transform.position = new Vector3 (Mathf.Round (currPos.x * ooScale) * scale, Mathf.Round (currPos.y * ooScale) * scale, currPos.z);
         }
     }
 

@@ -112,5 +112,13 @@ public class exPixelPerfect : MonoBehaviour {
                 ppfCamera.CalculatePixelPerfectScale ( sprite, toCamera.magnitude );
             }
         }
+
+        // Snap sprite position to pixel boundary.
+        if (sprite != null && ppfCamera != null && ppfCamera.scale > 0.0f)
+        {
+            float ooScale = 1.0f / ppfCamera.scale;
+            Vector3 currPos = sprite.transform.position;
+            sprite.transform.position = new Vector3 (Mathf.Round (currPos.x * ooScale) * ppfCamera.scale, Mathf.Round (currPos.y * ooScale) * ppfCamera.scale, currPos.z);
+        }
     }
 }
