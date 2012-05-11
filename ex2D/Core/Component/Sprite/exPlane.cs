@@ -233,6 +233,14 @@ public class exPlane : MonoBehaviour {
                 if ( spriteMng != null ) {
                     spriteMng_.AddToCommitList(this);
                 }
+                else
+                {
+                    // If camera was never set up, try again.  Bit of a goofy construction to not add additional
+                    // if-check to common code path.
+                    renderCamera = Camera.main;
+                    if(spriteMng != null)
+                        spriteMng_.AddToCommitList(this);
+                }
             }
         }
         get { return updateFlags_; }
