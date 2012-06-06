@@ -709,6 +709,10 @@ public class exSprite : exSpriteBase {
             return;
         }
 
+        // Save new flags here as we analyze what we need to do, then at the bottom we'll update the real
+        // property since that's fairly expensive to do even though it looks like a simple bitwise or.
+        UpdateFlags newUpdateFlags = UpdateFlags.None;
+
         // it is possible that the atlas is null and we don't have mesh
         if ( atlas_ == null ) {
             createMesh = true;
@@ -718,14 +722,14 @@ public class exSprite : exSpriteBase {
         if ( atlas_ != _atlas ) {
             atlas_ = _atlas;
             renderer.sharedMaterial = _atlas.material;
-            updateFlags |= UpdateFlags.UV;
+            newUpdateFlags |= UpdateFlags.UV;
             checkVertex = true;
         }
 
         //
         if ( index_ != _index ) {
             index_ = _index;
-            updateFlags |= UpdateFlags.UV;
+            newUpdateFlags |= UpdateFlags.UV;
             checkVertex = true;
         }
 
@@ -734,7 +738,7 @@ public class exSprite : exSpriteBase {
 
             // NOTE: if we use texture offset, it always need to update vertex
             if ( useTextureOffset_ ) {
-                updateFlags |= UpdateFlags.Vertex;
+                newUpdateFlags |= UpdateFlags.Vertex;
             }
 
             if ( !customSize_ ) {
@@ -754,7 +758,7 @@ public class exSprite : exSpriteBase {
                 if ( newWidth != width_ || newHeight != height_ ) {
                     width_ = newWidth;
                     height_ = newHeight;
-                    updateFlags |= UpdateFlags.Vertex;
+                    newUpdateFlags |= UpdateFlags.Vertex;
                 }
             }
         }
@@ -763,7 +767,7 @@ public class exSprite : exSpriteBase {
         if ( createMesh ) {
             // create mesh ( in editor, this can duplicate mesh to prevent shared mesh for sprite)
             meshFilter_.mesh = new Mesh();
-            updateFlags = UpdateFlags.Vertex | UpdateFlags.UV | UpdateFlags.Color | UpdateFlags.Index;
+            newUpdateFlags = UpdateFlags.Vertex | UpdateFlags.UV | UpdateFlags.Color | UpdateFlags.Index;
 
             // check if update mesh collider
             MeshCollider meshCollider = collider as MeshCollider;  
@@ -771,6 +775,9 @@ public class exSprite : exSpriteBase {
                 this.UpdateColliderSize(0.2f);
             }
         }
+
+        // Update the update flags.
+        updateFlags |= newUpdateFlags;
     }
 
     // ------------------------------------------------------------------ 
