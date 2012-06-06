@@ -5,6 +5,8 @@
 // Description  : 
 // ======================================================================================
 
+//#define SEARCH_FROM_CURRENT
+
 ///////////////////////////////////////////////////////////////////////////////
 // usings
 ///////////////////////////////////////////////////////////////////////////////
@@ -413,11 +415,72 @@ public class exSpriteAnimation : MonoBehaviour {
                 }
             }
 #else
-            int index = curAnimation.frameTimes.BinarySearch(wrappedTime);
+            #if SEARCH_FROM_CURRENT
+
+                ///*
+                int frameCount = curAnimation.frameTimes.Count;
+                if(frameCount < 1)
+                    return null;
+
+                int index = frameCount-1;
+                if(wrappedTime > curAnimation.frameTimes[sprite.index])
+                {
+                    for(int i=sprite.index+1; i<frameCount; i++)
+                    {
+                        float frameTime = curAnimation.frameTimes[i];
+                        if(frameTime >= wrappedTime)
+                        {
+                            index = i;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    index = frameCount - 1;
+                    for ( int i = 0; i < frameCount; ++i ) {
+                        if ( curAnimation.frameTimes[i] > wrappedTime ) {
+                            index = i;
+                            break;
+                        }
+                    }
+                }
+                //*/
+
+                /*
+                int frameCount = curAnimation.frameTimes.Count;
+                int index;
+                int startIndex = sprite.index;
+                if(startIndex<0)
+                    startIndex = 0;
+                if(wrappedTime >= curAnimation.frameTimes[sprite.index])
+                    index = curAnimation.frameTimes.BinarySearch(startIndex, frameCount-startIndex, wrappedTime, null);
+                else
+                    index = curAnimation.frameTimes.BinarySearch(0, startIndex, wrappedTime, null);
+                if ( index < 0 ) {
+                    index = ~index;
+                }
+                */
+
+                /*
+                int compindex = curAnimation.frameTimes.BinarySearch(wrappedTime);
+                if ( compindex < 0 ) 
+                {
+                    compindex = ~compindex;
+                }
+                if(index != compindex)
+                    Debug.Log("index=" + index + " compindex=" + compindex + "   (t=" + wrappedTime + " frameCount=" + frameCount + ")");
+                */
+
+            #else
+                int index = curAnimation.frameTimes.BinarySearch(wrappedTime);
+                if ( index < 0 ) {
+                    index = ~index;
+                }
+            #endif
 #endif
-            if ( index < 0 ) {
-                index = ~index;
-            }
+
+
             if ( index < curAnimation.clip.frameInfos.Count )
                 return curAnimation.clip.frameInfos[index];
         }
